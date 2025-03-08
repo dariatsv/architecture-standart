@@ -1,0 +1,23 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Диаграмма контекста для цифровых сервисов банка "Стандарт"
+top to bottom direction
+
+AddRelTag("async", $textColor=$ARROW_FONT_COLOR, $lineColor=$ARROW_COLOR, $lineStyle=DashedLine())
+
+Person(client, "Клиент", "Обращается за консультацией по депозитам")
+Person(call_center_person, "Менеджер колл-центра", "Обслуживает клиентов банка")
+Person(ext_call_center_person, "Менеджер партнёрского колл-центра", "Обслуживает клиентов через внешнюю систему")
+
+System(bank_standart_system, "Цифровые сервисы банка 'Стандарт'", "Сайт и интернет-банк для взаимодействия с клиентами")
+System_Ext(ext_call_center, "Партнёрский колл-центр", "Обрабатывает клиентские запросы через стороннюю систему")
+
+Rel(client, bank_standart_system, "Запрос информации о ставках", "HTTPS")
+Rel(client, ext_call_center, "Запрос информации о ставках", "Телефон / чат")
+
+Rel(call_center_person, bank_standart_system, "Получение актуальных данных о депозитах", "Система колл-центра")
+Rel(ext_call_center_person, ext_call_center, "Получение актуальных данных о депозитах", "Внешняя система")
+
+SHOW_LEGEND()
+@enduml

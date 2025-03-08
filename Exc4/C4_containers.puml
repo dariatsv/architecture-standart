@@ -1,0 +1,38 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+SHOW_PERSON_OUTLINE()
+
+title Диаграмма контейнеров для цифровых сервисов банка "Стандарт"
+top to bottom direction
+
+AddRelTag("async", $textColor=$ARROW_FONT_COLOR, $lineColor=$ARROW_COLOR, $lineStyle=DashedLine())
+AddRelTag("sync/async", $textColor=$ARROW_FONT_COLOR, $lineColor=$ARROW_COLOR, $lineStyle=DottedLine())
+
+AddElementTag("backendContainer", $fontColor=$ELEMENT_FONT_COLOR, $bgColor="#335DA5", $shape=EightSidedShape(), $legendText="Бэкенд-контейнер\nвосьмиугольная форма")
+
+Person(client, "Клиент", "Обращается за консультацией по депозитам")
+Person(call_center_person, "Менеджер колл-центра", "Оператор, работающий с клиентами банка")
+Person(ext_call_center_person, "Менеджер партнёрского колл-центра", "Оператор, работающий в сторонней системе")
+
+System_Boundary(bank_standart_system, "Цифровые сервисы банка 'Стандарт'") {
+    Container(abs, "АБС банка", "Delphi", "Десктопное приложение для работы с клиентами")
+    ContainerDb(abs_db, "База данных АБС", "Oracle", "Хранит и обрабатывает информацию о депозитах")
+
+    Container(call_center, "Система колл-центра", "React.js / Java Spring Boot", "Основной инструмент операторов банка")
+    ContainerDb(call_center_db, "База данных колл-центра", "PostgreSQL", "Хранит запросы клиентов и историю консультаций")
+}
+
+System_Ext(ext_call_center, "Партнёрский колл-центр", "Сторонний сервис обработки клиентских запросов")
+
+Rel(client, call_center, "Запрос информации по депозитам", "HTTPS / Телефон")
+Rel(client, ext_call_center, "Запрос информации по депозитам", "Телефон / Чат")
+
+Rel(call_center_person, abs, "Получение данных о ставках", "API")
+Rel(ext_call_center_person, ext_call_center, "Запрос актуальных данных", "API")
+
+Rel(call_center, call_center_db, "Доступ к истории запросов", "SQL / REST API")
+Rel(abs, abs_db, "Обновление информации по ставкам", "SQL")
+
+SHOW_LEGEND()
+@enduml
